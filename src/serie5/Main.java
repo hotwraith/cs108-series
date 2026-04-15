@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
+import static java.lang.Thread.sleep;
 import static javax.swing.SwingUtilities.invokeLater;
 
 public final class Main {
