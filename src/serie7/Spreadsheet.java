@@ -59,9 +59,10 @@ public final class Spreadsheet extends Application {
             cellButton.setPrefWidth(70);
             cellButton.setOnAction(e -> selectedCellProperty.set(cell));
             gridPane.add(cellButton, cell.getColumn() + 1, cell.getRow() + 1);
-            cell.addObserver(new Observer() {
-                @Override
-                public void newValue() {
+            cell.addObserver(() -> {
+                if(cell.isError()) {
+                    cellButton.setText("#ERROR#");
+                } else {
                     cellButton.setText(Integer.toString(cell.getValue()));
                 }
             });

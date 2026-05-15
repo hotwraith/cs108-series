@@ -1,5 +1,6 @@
 package serie7;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.IntBinaryOperator;
 
@@ -19,7 +20,7 @@ public final class Cell extends AbstractSubject implements Observer {
         this.arguments = List.of();
         this.operator = (x, y) -> initialValue;
         this.value = initialValue;
-        subscribe();
+        subscribe(arguments);
         notifyAllObservers();
     }
 
@@ -41,7 +42,6 @@ public final class Cell extends AbstractSubject implements Observer {
 
     public void setValue(int newValue) {
         value = newValue;
-        subscribe();
         notifyAllObservers();
     }
 
@@ -55,7 +55,7 @@ public final class Cell extends AbstractSubject implements Observer {
         contentString = newContentString;
         arguments = newArguments;
         operator = newOperator;
-
+        subscribe(newArguments);
         updateContent();
     }
 
@@ -66,10 +66,36 @@ public final class Cell extends AbstractSubject implements Observer {
         setValue(operator.applyAsInt(arg0, arg1));
     }
 
-    private void subscribe() {
+    private void subscribe(List<Cell> newArguments) {
         for(Cell cell : arguments) {
-            cell.subscribe();
+            cell.deleteObserver(this);
         }
+        this.arguments = newArguments;
+        for(Cell cell : newArguments) {
+            if((this.observers != null && this.observers.length > 0) && Arrays.asList(this.observers).contains(cell)) {
+                setError();
+                setValue(0);
+                arguments = List.of();
+                operator = (x, y) -> 0;
+                this.observers = new Observer[]{observers[0]};
+                cell.setError();
+                cell.setValue(0);
+                cell.arguments = List.of();
+                cell.operator = operator;
+                cell.observers = new Observer[]{cell.observers[0]};
+                break;
+            } else {
+                cell.addObserver(this);
+            }
+        }
+    }
+
+    public void setError() {
+        contentString = "#ERROR#";
+    }
+
+    public boolean isError() {
+        return String.valueOf(contentString).equals("#ERROR#");
     }
 
     @Override
