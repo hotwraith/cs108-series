@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class LZWTest {
     public LZWEncoder newEncoder(SortedSet<Character> alphabet, int dictCapacity) {
-        throw new Error("A faire : retourner un encodeur concret (partie 1)");
+        return new LZWConcreteEncoder(alphabet, dictCapacity);
     }
 
     public LZWDecoder newDecoder(SortedSet<Character> alphabet, int dictCapacity) {
